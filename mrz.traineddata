@@ -1,0 +1,154 @@
+To whom it may concern,
+
+Just created a tesseract 3.04 trained data (see attached). 
+I call it "MRZ" because it has the OCR-B as the only font and trained with 
+characters A-Z, 0-9 and the lesser-than symbol (<). Seems to be fast and 
+accurate in my projects.
+
+On Monday, June 24, 2013 at 6:58:47 PM UTC+2, Nick White wrote:
+>
+> Hi Peter, 
+>
+> Sorry for the lack of response, I think us regulars here are all 
+> quite busy at the moment. 
+>
+> Have you searched the archives of this mailing list? I seem to 
+> recall someone previously deciding to go with a different project 
+> which focused just on MRZ recognition. 
+>
+> Tesseract will do a reasonable job, as you have found, but perhaps 
+> a dedicated program could do even better (and for less effort on 
+> your part). 
+>
+> As far as improving your Tesseract results, though, I'd recommend 
+> looking into user_patterns. It isn't well documented, but if the 
+> format you're expecting is predictable it should help. Also have you 
+> set up a unicharambigs file? That may help a little too (not much, 
+> but it's probably worth adding for the common cases of 5 -> S, 8 -> 
+> B, etc). 
+>
+> > One more unrelated question. How to read data from image with 
+> non-standard 
+> > orientation 
+> > (upside down, rotated left/right by 90 degrees)? How to use OSD feature? 
+>
+> I confess I don't actually know. I think Tesseract might try to 
+> guess this entirely by itself. Does anyone else here know any 
+> better? 
+>
+> Once you're happy your MRZ training is as good as it will get, would 
+> you be happy to have it added to the main Tesseract repository? If 
+> so (and it'd be great if you were) open an issue on the bug tracker 
+> with the training file, and add some comments to the top of 
+> mrz.config about how it was created and where the source files for 
+> it are (see my grc.traineddata for an example). 
+>
+> Thanks Peter, and sorry again for not getting back to you sooner, 
+>
+> Nick 
+>
+> P.S. One other thing I just thought of: is the DPI you're feeding 
+> into Tesseract the same as the DPI you trained with (300)? Ideally 
+> it should be. Also you're right to preprocess using thresholding; 
+> Tesseract isn't particularly good at that step and it's much better 
+> if you can do it first. 
+>
+> On Wed, Jun 19, 2013 at 11:45:10PM -0700, Peter wrote: 
+> > Hello. 
+> > 
+> > I'm trying to train Tesseract for OCR. My goal is to be able to 
+> recognize text 
+> > from MRZ zone of various documents (mainly national ID). The training 
+> process 
+> > should be pretty straightforward and I'd expect good results since all I 
+> have 
+> > to deal with is one font (OCR-B), capital letters of Latin alphabet 
+> (A-Z), 
+> > digits 0-9 and "less than" sign (<). Unfortunately the results are worse 
+> than 
+> > expected. While the effects for preprocessed images (thresholding using 
+> GIMP) 
+> > are pretty good (not perfect - in many cases Tesseract treats 0 as O, 
+> sometimes 
+> > treats 5 as S and occasionally inserts unexpected whitespace between 
+> letters), 
+> > data taken directly from an unprocessed scanned image is rather poorly 
+> > recognized. There are many cases where Tesseract thinks O is 0, 5 is S, 
+> 8 is S, 
+> > 2 is Z, H is M, U is W etc. While 0 vs O case can be tough (OCR-B 0 and 
+> O don't 
+> > look too different) and perhaps beyond Tesseract capabilities, I think 
+> other 
+> > ambiguities can and should be eliminated. As I'm new to Tesseract (have 
+> been 
+> > using it for just a few days now) I hope you can suggest me the optimal 
+> > training for OCR-B font or even provide me with some good training 
+> sample. 
+> > Here's what I did to train Tesseract: 
+> > 
+> > 1) Prepared training text with OCR-B font (train1.odt, see attachments), 
+> > converted it to .pdf with LibreOffice Writer (train1.pdf, see 
+> attachments) 
+> > 2) Opened train1.pdf in GIMP and saved it as 300 dpi tif (resolution: 
+> 2479 x 
+> > 3508), can't attach it as its size is more than 30 MB 
+> > 3) Prepared font_properties file with the following line: ocrb 0 0 1 0 0 
+> > 4) Executed the following Tesseract commands: 
+> > 
+> > tesseract mrz.ocrb.exp0.tif mrz.ocrb.exp0 batch.nochop makebox 
+> (corrected 
+> > mrz.ocrb.exp0.box included as attachment) 
+> > tesseract mrz.ocrb.exp0.tif mrz.ocrb.exp0 box.train 
+> > unicharset_extractor mrz.ocrb.exp0.box 
+> > shapeclustering -F font_properties -U unicharset mrz.ocrb.exp0.tr 
+> > mftraining -F font_properties -U unicharset mrz.ocrb.exp0.tr 
+> > cntraining mrz.ocrb.exp0.tr 
+> > 
+> > changed shapetable, normproto, inttemp, pffmtable, unicharset names so 
+> that 
+> > they're prefixed with mrz 
+> > 
+> > combine_tessdata mrz. 
+> > 
+> > To read data from images, I run: 
+> > 
+> > tesseract -l mrz <image_file> output 
+> > 
+> > Is there anything that can be done better? Maybe my training file is not 
+> good 
+> > enough? 
+> > If that's the case, can you please provide me with a better one? 
+> > 
+> > One more unrelated question. How to read data from image with 
+> non-standard 
+> > orientation 
+> > (upside down, rotated left/right by 90 degrees)? How to use OSD feature? 
+> > 
+> > 
+> > 
+> > -- 
+> > -- 
+> > You received this message because you are subscribed to the Google 
+> > Groups "tesseract-ocr" group. 
+> > To post to this group, send email to tesser...@googlegroups.com 
+> <javascript:> 
+> > To unsubscribe from this group, send email to 
+> > tesseract-oc...@googlegroups.com <javascript:> 
+> > For more options, visit this group at 
+> > http://groups.google.com/group/tesseract-ocr?hl=en 
+> >   
+> > --- 
+> > You received this message because you are subscribed to the Google 
+> Groups 
+> > "tesseract-ocr" group. 
+> > To unsubscribe from this group and stop receiving emails from it, send 
+> an email 
+> > to tesseract-oc...@googlegroups.com <javascript:>. 
+> > For more options, visit https://groups.google.com/groups/opt_out. 
+> >   
+> >   
+>
+>
+>
+>
+>
